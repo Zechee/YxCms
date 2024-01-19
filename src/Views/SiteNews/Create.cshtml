@@ -1,0 +1,147 @@
+﻿
+<script type="text/javascript" src="/content/js/wangEditor.js?v=9"></script>
+<style>
+    #editorMenu {
+        width: auto;
+    }
+
+    #editor {
+        height: 280px;
+        max-height: 500px;
+        width: auto;
+        border: 1px solid #ccc;
+    }
+
+        #editor p {
+            height: auto;
+        }
+
+    .w-e-toolbar {
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+    }
+</style>
+<div class="layuimini-main">
+
+    <form id="form1" class="layui-form layuimini-form" lay-filter="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">编号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="id" readonly class="layui-input">
+                <input id='UpdatedTime' name='UpdatedTime' type='hidden' />
+                <input id='TypeId' name='typeId' type='hidden' />
+            </div>
+            <label class="layui-form-label ">类别</label>
+            <div class="layui-input-inline">
+                <select id="TypeName" name="typeName" lay-filter="TypeName"></select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" class="layui-input" lay-verify="required" lay-reqtext="标题必填" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="createdTime" class="layui-input" readonly autocomplete="off">
+            </div>
+            <label class="layui-form-label ">点击率</label>
+            <div class="layui-input-inline">
+                <input type="number" name="hits" class="layui-input" autocomplete="off" value='0'>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">源码</label>
+            <div class="layui-input-block">
+                <textarea id='Content' name='context' class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block">
+                <div>
+                    <div id="editorMenu"></div>
+                    <div id="editor"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+       
+        form.render();
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+        var baseApi = "/SiteNews/";
+        var testLocalUploadUrl = baseApi+ "UploadEditor";
+        var id = parent.currentEditId;
+        var type = parent.currentType;
+
+        var editor = Method.editor("Content", testLocalUploadUrl);
+
+        var loadBefore = function () {
+            $.get(baseApi + "GetTypeNames2", function (data) {
+                Method.bindArrayToSelect(data, "TypeName");
+                form.render();
+            }, "json");
+
+        }
+        loadBefore();
+        var addLoadBefore = function () {
+
+        }
+        var editLoadBefore = function () {
+            $.get(baseApi + "GetEdit?id=" + id, function (data) {
+                //console.log(data);
+                form.val('form1', data);
+                editor.txt.html(data.context);
+            }, "json");
+        }
+        if (type && type === "add") {
+            addLoadBefore();
+
+        }
+        if (type && type === "edit") {
+            editLoadBefore();
+
+        }
+        form.on('submit(saveBtn)', function (data) {
+            if (type && type === "add") {
+                var url = baseApi + "Create";
+                console.log(data.field);
+                $.post(url, data.field, function (res) {
+                    //console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            else {
+                var url = baseApi + "Edit";
+                console.log(data.field);
+                $.post(url, data.field, function (res) {
+                    //console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            return false;
+        });
+
+    });
+</script>
+

@@ -1,0 +1,372 @@
+﻿@using ChuntianCms.BLL;
+@{
+    var siteData = HomeBLL.GetSiteData();
+    var systemData = await HomeBLL.GetSystemData(Context);
+}
+<style>
+    .top-panel {
+        border: 1px solid #eceff9;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .top-panel > .layui-card-body {
+            height: 60px;
+        }
+
+    .top-panel-number {
+        line-height: 60px;
+        font-size: 30px;
+        /*border-right: 1px solid #eceff9;*/
+    }
+
+    .top-panel-tips {
+        line-height: 30px;
+        font-size: 12px
+    }
+
+    .welcome .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+    .welcome .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .welcome .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .welcome .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .welcome .icon-tip {
+        color: #ff5722 !important;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main welcome">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-xs12 layui-col-md3">
+
+                <div class="layui-card top-panel">
+                    <div class="layui-card-header">网站总数</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-xs12 layui-col-md12 top-panel-number">
+                                @siteData.SiteCount
+                            </div>
+                            @*<div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                                    比昨天 <a style="color: #1aa094">▲0.12</a><br>
+                                    比七日 <a style="color: #bd3004">▼0.06</a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-col-xs12 layui-col-md3">
+
+                <div class="layui-card top-panel">
+                    <div class="layui-card-header">文章总数</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-xs12 layui-col-md12 top-panel-number">
+                                @siteData.ArticleCount
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-col-xs12 layui-col-md3">
+
+                <div class="layui-card top-panel">
+                    <div class="layui-card-header">用户总数</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-xs12 layui-col-md12 top-panel-number">
+                                @siteData.UserCount
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-col-xs12 layui-col-md3">
+
+                <div class="layui-card top-panel">
+                    <div class="layui-card-header">产品总数</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-xs12 layui-col-md12 top-panel-number">
+                                @siteData.ProCount
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="layui-row layui-col-space15">
+            <div>
+                <div class="layui-inline">
+                    时间：<div class="layui-input-inline">
+                        <select id="TypeName" name="TypeName" class="layui-input">
+                            <option selected="selected" value="7">7</option>
+                            <option value="30">30</option>
+                            <option value="365">365</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-md9">
+              
+                <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+
+            </div>
+            <div class="layui-col-xs12 layui-col-md3">
+                <div id="echarts-pies" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+            </div>
+        </div>
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-xs12 layui-col-md9">
+                <div id="echarts-dataset" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
+            </div>
+            <div class="layui-col-xs12 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-fire icon"></i>系统信息</div>
+                    <div class="layui-card-body layui-text">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="100">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>用户名</td>
+                                    <td>
+                                        @systemData.UserName
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>角色</td>
+                                    <td>@systemData.RoleName</td>
+                                </tr>
+                                <tr>
+                                    <td>姓名</td>
+                                    <td>@systemData.TrueName</td>
+                                </tr>
+                                <tr>
+                                    <td>剩余时间</td>
+                                    <td>
+                                        @systemData.ExpiresTime
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>本机Ip</td>
+                                    <td style="padding-bottom: 0;">                       
+                                        @systemData.LocalIp
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>服务器Ip</td>
+                                    <td style="padding-bottom: 0;">
+                                        @systemData.ServerIp
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['layer', 'form', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+        var form = layui.form;
+        /**
+         * 报表功能
+         */
+
+
+        var ddlType = document.getElementById("TypeName");
+        ddlType.onchange = function () {
+            console.log(ddlType.value);
+            binddomainChartB(ddlType.value);
+        }
+
+        binddomainChartB(ddlType.value);
+        function binddomainChartB(day) {
+
+            var url = "/Home/GetIpCountOfTypeNames?daycount=" + day;
+            $.get(url, function (res) {
+                var txt = "网站流量-报表图";
+                bindDomainEchartMore(txt, res.typenames, res.dates, res.series);
+            }, "json")
+        }
+
+        function bindDomainEchartMore(txt, res1, res2, res3) {
+            //, 'walden'
+            var echartsRecords = echarts.init(document.getElementById('echarts-records'));
+            var option = {
+                title: {
+                    text: txt
+                },
+                //tooltip: {
+                //    trigger: 'axis'
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: res1
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: res2
+                },
+                yAxis: {
+                    type: 'value',
+                    scale: false
+                },
+                series: res3
+            };
+            echartsRecords.setOption(option);
+
+            // echarts 窗口缩放自适应
+            window.onresize = function () {
+                echartsRecords.resize();
+            }
+        }
+        binddomainChartA();
+        function binddomainChartA() {
+
+            var url = "/Home/GetIpCountPieChart";
+            $.get(url, function (res) {
+                var txt = "流量来源-比例图";
+                bindSiteEchartMore(txt, res.typenames, res.series);
+            }, "json")
+        }
+        /**
+         * 玫瑰图表
+         */
+        function bindSiteEchartMore(txt, res1, res2) {
+            var echartsPies = echarts.init(document.getElementById('echarts-pies'));
+            var optionPies = {
+                title: {
+                    text: txt,
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: res1
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '60%'],
+                        roseType: 'radius',
+                        data: res2,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+
+            echartsPies.setOption(optionPies);
+        }
+
+        binddomainChartC();
+        function binddomainChartC() {
+            var url = "/Home/GetUserSaleCountColumnChart";
+            $.get(url, function (res) {
+                var txt = "流量排行榜";
+                var txt2 = "总量";
+                bindSaleEchartMore(txt, txt2, res.key, res.series);
+            }, "json")
+        }
+
+        /**
+        * 柱状图
+        */
+        function bindSaleEchartMore(txt1,txt2, res1, res2) {
+
+            var echartsDataset = echarts.init(document.getElementById('echarts-dataset'));
+
+            var optionDataset = {
+                title: {
+                    text: txt1
+                },
+                legend: {
+                    data: [txt2]
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                yAxis: { type: 'category', data: res1 },
+                xAxis: { type: 'value'},
+                // Declare several bar series, each will be mapped
+                // to a column of dataset.source by default.
+                series: {
+                    data: res2,
+                    type: 'bar',
+                    smooth: true
+                }
+            };
+
+            echartsDataset.setOption(optionDataset);
+        }
+        
+
+    });
+</script>
+

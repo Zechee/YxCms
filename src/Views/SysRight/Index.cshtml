@@ -1,0 +1,93 @@
+﻿@using ChuntianCms.BLL
+@{
+    var menus = HomeBLL.sysRightBLL.GetAllMenus();
+    var roles = HomeBLL.sysRightBLL.GetAllRoles();
+}
+@*<link rel="stylesheet" href="/content/menu/js/lay-module/formSelect/formSelects-v4.css" />
+<script src="/content/menu/js/lay-module/formSelect/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>*@
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <table lay-filter="divRight" id="cbdiv">
+            <thead>
+                <tr>
+                    @foreach (var item in roles)
+                    {
+                        <th lay-data="{field:'@item.Name', width:200}">@item.Name</th>
+                        <th lay-data="{field:'@item.Id', width:100}">选择</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in menus)
+                {
+                    <tr>
+
+                        @foreach (var item2 in roles)
+                        {
+                            <td>@item.Name</td>
+                            var flag = HomeBLL.sysRightBLL.GetRightFlagOpts(item2.Id, item.Id).Value;
+                            var ckstr = flag == true ? "checked" : "";
+                            var name = "menu" + item.Id + "role" + item2.Id;
+                            var value = item.Id + "," + item2.Id;
+                            var hdstr = item.IsMenu == 1 ? "none" : "block";
+                            <td><span style="display:@hdstr"> <input lay-filter="switchTest" lay-skin="switch" type="checkbox" @ckstr id="@name" title="@hdstr" lay-text="开|关" name="menurole" value="@value" /></span></td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    var baseApi = "/SysRight/";
+    layui.use(['table', 'form'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+         
+        //转换静态表格
+        table.init('divRight', {
+            //height: 1000 //设置高度
+            limit: 100000 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+            //支持所有基础参数
+        });
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            //获取当前的新闻的id
+            var id = data.elem.id;
+            var value = data.elem.value;
+            //是否置顶
+            var check = "";
+            if (this.checked) {
+                check = "1";
+                //layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+                //    offset: '6px'
+                //});
+                //layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅 仅是ON|OFF', data.othis)
+            } else {
+                check = "0";
+                //layer.msg('开关： 关掉了', {
+                //    offset: '6px'
+                //});
+            }
+            var arr = { value: value, selected: check };
+            var url = baseApi + "UpdateRightNext";
+
+            $.post(url, arr, function (data) {
+                if (data.type == 1) {
+                    layer.msg("更新成功");
+                }
+                else {
+                    layer.alert(data.message, {
+                        title: '提示信息'
+                    });
+                }
+            }, "json");
+           
+        });
+
+    });
+   
+
+</script>

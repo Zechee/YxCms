@@ -1,0 +1,107 @@
+﻿
+@using ChuntianCms.Models
+@model SystemSettingViewModel
+<style>
+    .layui-form-item .layui-input-company {
+        width: auto;
+        padding-right: 10px;
+        line-height: 38px;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">网站名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="SiteName" lay-verify="required" lay-reqtext="网站名称不能为空" placeholder="请输入网站名称" value="@Model.SiteName" class="layui-input">
+                    @*<tip>填写自己部署网站的名称。</tip>*@
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">网站域名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Domain" lay-verify="required" lay-reqtext="网站域名不能为空" placeholder="请输入网站域名" value="@Model.Domain" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">缓存时间</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="Cache" lay-verify="number" value="@Model.Cache" class="layui-input">
+                </div>
+                <div class="layui-input-inline layui-input-company">分钟</div>
+                <div class="layui-form-mid layui-word-aux">本地开发一般推荐设置为 0，线上环境建议设置为 10。</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">最大文件上传</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="MaxFileSize" lay-verify="number" value="@Model.MaxFileSize" class="layui-input">
+                </div>
+                <div class="layui-input-inline layui-input-company">KB</div>
+                <div class="layui-form-mid layui-word-aux">提示：1 M = 1024 KB</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">上传文件类型</label>
+                <div class="layui-input-block">
+                    <input type="text" name="FileType" value="@Model.FileType" class="layui-input">
+                    <tip>例如：png|gif|jpg|jpeg|zip|rar</tip>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required">首页标题</label>
+                <div class="layui-input-block">
+                    <textarea name="Title" class="layui-textarea">@Model.Title</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">说明</label>
+                <div class="layui-input-block">
+                    <textarea name="Speak" class="layui-textarea">@Model.Speak</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required">版权信息</label>
+                <div class="layui-input-block">
+                    <textarea name="CopyRight" class="layui-textarea">@Model.CopyRight</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    layui.use(['form', 'miniPage'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            miniPage = layui.miniPage;
+
+        var $ = layui.$;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var url = "/Home/SystemSetting";
+            console.log(data.field);
+            $.post(url, data.field, function (res) {
+                //console.log(res);
+                layer.alert(res.message);
+                form.render();
+            });
+            return false;
+        });
+
+    });</script>

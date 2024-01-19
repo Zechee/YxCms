@@ -1,0 +1,145 @@
+﻿
+<div class="layuimini-main">
+
+    <form id="form1" class="layui-form layuimini-form" lay-filter="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">编号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="id" readonly class="layui-input">
+                <input id='CreatedTime' name='createdTime' type='hidden' />
+                <input id='UpdatedTime' name='updatedTime' type='hidden' />
+            </div>
+            <label class="layui-form-label ">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text"  name="trueName" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户头像</label>
+            <div class="layui-input-inline">
+                <input type="text" id="Logo" name="logo"  autocomplete="off"  class="layui-input">
+                <img id="imgLogo" style="width:190px;height:190px;margin-top:10px">
+            </div>
+            <span>
+                <a class="layui-btn" id="btnUpload"><i class="fa fa-upload"></i> 上传</a>
+                <input class="layui-upload-file" type="file" accept=""  id="txtFile">
+            </span>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userName" class="layui-input" lay-verify="required" lay-reqtext="用户名必填" autocomplete="off">
+            </div>
+            <label class="layui-form-label ">密码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="password" class="layui-input" lay-verify="required" lay-reqtext="密码必填" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">角色编号</label>
+            <div class="layui-input-inline">
+                <select id="RoleId" name="roleId" lay-filter="RoleId"></select>
+            </div>
+            <label class="layui-form-label ">角色类型</label>
+            <div class="layui-input-inline">
+                <input type="text" id="RoleName" name="roleName" class="layui-input" >
+            </div>
+        </div>
+       
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer, 
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+        var baseApi = "/SysUser/";
+        var adsPath = "/upload/logo/";
+        var id = parent.currentEditId;
+        var type = parent.currentType;
+        var txtRoleId = document.getElementById("RoleId");
+        var txtElem = document.getElementById("RoleName");
+        var txtPicName = document.getElementById("Logo");
+        var picDiv = document.getElementById("imgLogo");
+        var btnUpload = document.getElementById("btnUpload");
+        var txtFileElem = document.getElementById("txtFile");
+        //console.log(id);
+        //console.log(type);
+        var loadBefore = function () {
+            txtFileElem.addEventListener("change", function (e) {
+                Method.lookLogo("txtFile", "imgLogo");
+                var url = baseApi + "Upload";
+                var bindpic = function (res) {
+                    txtPicName.value = res;
+                }
+                Method.uploadFile("txtFile", url, bindpic);
+            });
+            btnUpload.onclick = function () {
+                txtFileElem.click();
+            }
+            $.get(baseApi + "GetRoles", function (data) {
+                Method.bindArrayToSelect(data, "RoleId");
+                form.render();
+                txtElem.value = txtRoleId.options[txtRoleId.selectedIndex].text
+            }, "json");
+            
+        }
+        loadBefore();
+        var addLoadBefore = function () {
+            
+        }
+        var editLoadBefore = function () {
+            $.get(baseApi + "GetEdit?id=" + id, function (data) {
+                console.log(data);
+                form.val('form1', data);
+                //Method.bindPic(txtPicName, picDiv, adsPath);
+                picDiv.src = adsPath + data.logo;
+            }, "json");
+        }
+        if (type && type === "add") {
+            addLoadBefore();
+
+        }
+        if (type && type === "edit") {
+            editLoadBefore();
+
+        }
+        form.on('select(RoleId)', function (res) {
+            txtElem.value = res.elem[res.elem.selectedIndex].text;
+            //console.log(txtElem.value);
+            return false;
+        });
+        form.on('submit(saveBtn)', function (data) {
+            if (type && type === "add") {
+                var url = baseApi + "Create";
+                console.log(data.field);
+                $.post(url, data.field, function (res) {
+                    //console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            else {
+                var url = baseApi + "Edit";
+                $.post(url, data.field, function (res) {
+                    //console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            return false;
+        });
+
+    });
+</script>

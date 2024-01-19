@@ -1,0 +1,284 @@
+
+html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, button, textarea, select, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font: 16px/1.33 "微软雅黑",Verdana,"宋体",Helvetica,sans-serif;
+    background-color: #fff;
+    padding: 10px;
+    color: #000;
+}
+
+fieldset, img {
+    border: 0 none;
+}
+
+h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+}
+
+h2 {
+    margin: 16px 0 8px 0;
+    font-size: 18px;
+}
+
+p {
+    line-height: 35px;
+}
+
+.clear {
+    clear: both;
+}
+
+textarea {
+    padding: 0 3px 0 3px;
+    height: 200px;
+    line-height: 30px;
+    background: #FAFAFA;
+    border: 1px solid #D7D7D7;
+    vertical-align: middle;
+    font-size: 12px;
+    font-family: '微软雅黑';
+    width: 96%;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+input[type="text"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime"] {
+    margin-right: 5px;
+    padding: 0 3px 0 3px;
+    height: 30px;
+    line-height: 30px;
+    background: #FAFAFA;
+    border: 1px solid #D7D7D7;
+    vertical-align: middle;
+    font-size: 12px;
+    font-family: '微软雅黑';
+    width: 300px;
+}
+
+select,select[multiple] {
+    margin-right: 5px;
+    padding: 0 3px 0 3px;
+    height: 30px;
+    line-height: 30px;
+    background: #FAFAFA;
+    border: 1px solid #D7D7D7;
+    vertical-align: middle;
+    font-size: 12px;
+    font-family: '微软雅黑';
+    width: 150px;
+}
+
+button, input[type="submit"] {
+    margin-right: 5px;
+    padding: 0 3px 0 3px;
+    height: 30px;
+    line-height: 30px;
+    background: #FAFAFA;
+    border: 1px solid #D7D7D7;
+    vertical-align: middle;
+    font-size: 12px;
+    font-family: '微软雅黑';
+    max-width: 200px;
+    min-width:100px;
+    overflow: hidden;
+}
+
+li {
+    list-style: none outside none;
+}
+/*原始#2ba6cb;*/
+a, a:visited {
+    color: #01AAED; 
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: none;
+        color: #e83632;
+    }
+
+
+.textcenter {
+    text-align: center;
+}
+
+
+.button {
+    color: #01AAED;
+    font-size: 14px;
+    cursor: pointer;
+}
+/*header头部*/
+#top ul li {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.menu-span {
+    position: relative;
+    /*left:0px;
+    top: 0px;*/
+    width: 50px;
+    z-index: 999;
+    display: block;
+    font-family: Comic Sans MS;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.menu-icon {
+    width: 50px;
+    height: 40px;
+    border-top: 10px solid #666666;
+    border-bottom: 10px solid #666666;
+    background-color: #666666;
+    padding: 5px 0;
+    background-clip: content-box;
+}
+
+.index_main_left {
+    position: absolute;
+    height: auto;
+    left: 40px;
+    top: 70px;
+}
+
+.index_main_left_hidden {
+    display: none;
+}
+
+.index_main_right {
+    top: 70px;
+    width: auto;
+    position: absolute;
+    height: auto;
+    left: 160px;
+    right: 20px;
+}
+
+@media screen and (max-width:1200px) {
+    .index_main_left {
+        width: 15%;
+        float: left;
+        height: 99%;
+        clear: both;
+    }
+
+    .index_main_right {
+        width: 85%;
+        float: left;
+        position: relative;
+        top: auto;
+    }
+}
+
+@media screen and (max-width:640px) {
+    .index_main_left {
+        display: none;
+    }
+
+    .index_main_left_hidden {
+        width: 100px;
+        position: absolute;
+        right: 0px;
+        top: 60px;
+        height: 99%;
+        clear: both;
+        display: block;
+        z-index: 9999;
+    }
+
+    .index_main_right {
+        width: 100%;
+        left: 0px;
+        right: 0px;
+        clear: both;
+    }
+}
+
+.main {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+/*创建编辑页面form表单设计*/
+#form .left {
+    width: 100px;
+    text-align: right;
+    float:left;
+    display:block;
+}
+/*#form input, #form select, #form textarea {
+    width: 100%;
+}*/
+#form .right {
+    /*width: 400px;*/
+    /*text-align: left;*/
+    float: left;
+    display: block;
+}
+#form p{
+    clear:both;
+}
+#form #btnSave {
+    display: block;
+    text-align: center;
+}
+
+/*table {
+    border-spacing: 0;
+    width: 100%;
+}
+
+    table > thead > tr > th {
+        text-align: left;
+    }
+
+    table > tbody > tr {
+        height: 35px;
+        line-height: 35px;
+    }
+
+        table > tbody > tr > td {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+.tablespacing {
+    border-spacing: 3px;
+}
+
+#List th:nth-child(1), th:nth-child(2) {
+    width: 5%;
+}
+
+#List th:nth-child(3) {
+    width: auto;
+}
+
+#List th:nth-child(4), th:nth-child(5), th:nth-child(6) {
+    width: 15%;
+}
+
+
+table .span {
+    overflow: hidden;
+    height: 35px;
+    display: block;
+    line-height: 35px;
+}*/

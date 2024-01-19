@@ -1,0 +1,192 @@
+﻿<style>
+    .layui-iconpicker-body.layui-iconpicker-body-page .hide {
+        display: none;
+    }
+</style>
+<div class="layuimini-main">
+
+    <form id="form1" class="layui-form layuimini-form" lay-filter="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-inline">
+                <input id='Id' name='id' type='hidden' />
+                <input id='NewId' name='newId' type='hidden' />
+                <input id='CreatedTime' name='createdTime' type='hidden' />
+                <input id='UpdatedTime' name='updatedTime' type='hidden' />
+                <input type="text" id="Name" name="name" class="layui-input" lay-verify="required" lay-reqtext="必填选项">
+            </div>
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-inline">
+                <input type="text" name="menuUrl" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标</label>
+            <div class="layui-input-inline">
+                <input type="text" id="MenuIcon" name="menuIcon"  lay-filter="MenuIcon" class="hide">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">目标</label>
+            <div class="layui-input-inline">
+                <select name='target'><option selected="selected">_self</option><option>_blank</option></select>
+            </div>
+            <label class="layui-form-label">是否是菜单</label>
+            <div class="layui-input-inline">
+                <input type="hidden" name="isMenu" value="" id="IsMenu"/>
+                <input type="checkbox" id="isMenuSwitch" checked=""  lay-skin="switch" lay-filter="switchTest" lay-text="是|否">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级Id</label>
+            <div class="layui-input-inline">
+                <select id='ParentId' name='parentId'></select>
+            </div>
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-inline">
+                <input id='Sort' name='Sort' type='number' value='0' class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择操作</label>
+            <div class="layui-input-inline">
+                <select id='ActionId' name='actionId' lay-filter="ActionId"></select>
+            </div>
+            <label class="layui-form-label">操作编码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="Code" name="code" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">说明</label>
+            <div class="layui-input-block">
+                <textarea name="speak" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    layui.use(['form', 'iconPickerFa'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var iconPickerFa = layui.iconPickerFa;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+        var baseApi = "/SysMenu/";
+        $.ajaxSettings.async = false;
+        var id = parent.currentEditId;
+        var type = parent.currentType;
+        function setSelectArray(arrs, selectId) {
+            Method.bindArrayToSelect(arrs, selectId);
+        }
+        iconPickerFa.render({
+            // 选择器，推荐使用input
+            elem: '#MenuIcon',
+            // fa 图标接口
+            url: "/lib/font-awesome-4.7.0/less/variables.less",
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 点击回调
+            click: function (data) {
+                console.log(data);
+            },
+            // 渲染成功后的回调
+            success: function (d) {
+                //console.log(d);
+            }
+        });
+        var loadBefore = function () {
+
+            $.get(baseApi + "GetActionCodes", function (data) {
+                setSelectArray(data, "ActionId");
+            }, "json");
+            form.render();
+            var ddlKeyCode = document.getElementById("ActionId");
+            ddlKeyCode.addEventListener("change", function () {
+               
+            });
+            form.on('select(ActionId)', function (res) {
+                console.log(res.value);
+                document.getElementById("Code").value = res.value;
+                document.getElementById("Name").value = res.elem[res.elem.selectedIndex].text;
+                return false;
+            });
+            form.on('switch(switchTest)', function (data) {
+                $("#IsMenu").val(this.checked ? 1 : 0);
+            });
+
+           
+        }
+        loadBefore();
+
+        var addLoadBefore = function () {
+            $.get(baseApi + "BindParentid", function (data) {
+                setSelectArray(data, "ParentId");
+            }, "json");
+            form.render();
+        }
+        var editLoadBefore = function () {
+            $.get(baseApi + "BindParentidEdit?pid=" + id, function (data) {
+                setSelectArray(data, "ParentId");
+            }, "json");
+            $.get(baseApi + "GetEdit?id=" + id, function (data) {
+                //console.log(data);
+                form.val('form1', data);
+                if (data.MenuIcon && data.MenuIcon.length > 0) {
+                    iconPickerFa.checkIcon('MenuIcon', data.MenuIcon);
+                }
+                if (data.IsMenu == 1) {
+                    $("#IsMenuSwitch").attr("checked", "checked");
+                } else {
+                    $("#IsMenuSwitch").removeAttr('checked');
+                }
+       
+                
+            }, "json");
+            form.render();
+        }
+        if (type && type === "add") {
+            addLoadBefore();
+
+        }
+        if (type && type === "edit") {
+            editLoadBefore();
+
+        }
+        form.on('submit(saveBtn)', function (data) {
+            if (type && type === "add") {
+                var url = baseApi + "Create";
+                console.log(data.field);
+                $.post(url, data.field, function (res) {
+                    console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            else {
+                var url = baseApi + "Edit";
+                console.log(data.field);
+                $.post(url, data.field, function (res) {
+                    console.log(res);
+                    layer.close(parentIndex);
+                });
+            }
+            return false;
+        });
+
+    });
+</script>

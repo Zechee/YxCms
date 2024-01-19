@@ -1,0 +1,114 @@
+﻿
+@using ChuntianCms.Models
+@model AccountModel
+@{ }
+<style>
+    .layui-form-item .layui-input-company {
+        width: auto;
+        padding-right: 10px;
+        line-height: 38px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+        border-radius: 40px;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">个人账号</label>
+                <div class="layui-input-block">
+                    <input type="hidden" name="Id" value="@Model.Id">
+                    <input type="text" name="UserName" value="@Model.UserName" class="layui-input" readonly="readonly">
+                    @*<tip>填写自己管理账号的名称。</tip>*@
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">角色</label>
+                <div class="layui-input-block">
+                    <input type="text" name="RoleName" value="@Model.RoleName" class="layui-input" readonly="readonly">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">真实姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="TrueName" lay-verify="required" lay-reqtext="不能为空" value="@Model.TrueName" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">头像</label>
+                <div class="layui-input-block">
+                    @if (string.IsNullOrEmpty(Model.Logo))
+                    {
+                        <img id="imgLogo" src="~/Content/images/yutianlogo.png" class="avatar"> }
+                    else
+                    {
+                        <img id="imgLogo" src="/upload/logo/@Model.Logo" class="avatar">}
+                    <input type="hidden" id="Logo" name="Logo" autocomplete="off" class="layui-input" value="@Model.Logo">
+                    <input class="layui-upload-file" type="file" accept="" id="txtFile">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    layui.use(['form', 'miniPage'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            miniPage = layui.miniPage;
+
+        var $ = layui.$;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        var UploadLogo = function () {
+            var txtPicName = document.getElementById("Logo");
+            var picDiv = document.getElementById("imgLogo");
+            var txtFileElem = document.getElementById("txtFile");
+            txtFileElem.addEventListener("change", function (e) {
+                Method.lookLogo("txtFile", "imgLogo");
+                var url = "/SysUser/Upload";
+                var bindpic = function (res) {
+                    txtPicName.value = res;
+                }
+                Method.uploadFile("txtFile", url, bindpic);
+            });
+            picDiv.onclick = function () {
+                txtFileElem.click();
+            }
+        }
+
+        UploadLogo();
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var url = "/Home/UserSetting";
+            $.post(url, data.field, function (res) {
+                //console.log(res);
+                if (res.type == 1) {
+                    layer.alert("修改成功");
+                }
+                else {
+                    layer.alert(res.message);
+                }
+                form.render();
+            });
+            return false;
+        });
+
+    });</script>

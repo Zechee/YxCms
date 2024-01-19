@@ -1,0 +1,10 @@
+{
+    "SiteName" : "云想内容管理系统",
+    "Domain" : "",
+    "Cache" : 0,
+    "MaxFileSize" : 2048,
+    "FileType" : "png|gif|jpg|jpeg|zip|rar",
+    "Title" : "",
+    "Speak" : "",
+    "CopyRight" : ""
+}

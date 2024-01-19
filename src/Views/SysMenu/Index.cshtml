@@ -1,0 +1,188 @@
+﻿
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <div style="padding-top:10px;">
+            <button class="layui-btn layui-btn-normal" id="btn-add">新增</button>
+            <button class="layui-btn layui-btn-normal" id="btn-del">删除</button>
+            <button class="layui-btn layui-btn-normal" id="btn-expand">全部展开</button>
+            <button class="layui-btn layui-btn-normal" id="btn-fold">全部折叠</button>
+        </div>
+
+        <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        <script type="text/html" id="auth-state">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+        <script type="text/html" id="switchTpl">
+            <!-- 这里的 checked 的状态只是演示 -->
+            <input id="checkShow" type="checkbox" name="Show" value="{{d.id}}" lay-skin="switch" lay-text="启用|停用" {{ d.IsShow == "启用" ? "" : "checked" }} lay-filter="ShowDemo">
+        </script>
+    </div>
+</div>
+
+
+<script>
+    var baseApi = "/SysMenu/"
+    var currentType = "";
+    var currentEditId = "";
+    layui.use(['table', 'treetable','form'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var miniPage = layui.miniPage;
+        var form = layui.form;
+
+        var createFun = function () {
+            var url = baseApi + "Create?type=add";
+            var content = miniPage.getHrefContent(url);
+            var openWH = miniPage.getOpenWidthHeight();
+            currentType = "add";
+            var index = layer.open({
+                title: '添加菜单',
+                type: 1,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: true,
+                area: ["840px", "600px"],
+                content: content,
+                end: function () {
+                    //location.reload();
+                }
+            });
+        }
+        var deleteFun = function (ids) {
+            layer.confirm('确定删除选中的信息？', { icon: 3, title: '提示信息' }, function (index) {
+                var index = layer.msg('删除中，请稍候', { icon: 16, time: false, shade: 0.8 });
+                var url = baseApi + "Delete?id=" + ids;
+                $.post(url, function (data) {
+                    if (data.type == 1) {
+                        layer.close(index);
+                        layer.msg("删除成功");
+                    }
+                    else {
+                        layer.alert(data.message, {
+                            title: '删除失败'
+                        });
+                    }
+                }, "json");
+                
+            });
+        }
+        var editFun = function (id) {
+            var url = baseApi + "Create?type=edit&id=" + id;
+            var content = miniPage.getHrefContent(url);
+            var openWH = miniPage.getOpenWidthHeight();
+            currentType = "edit";
+            currentEditId = id;
+            var index = layer.open({
+                title: '编辑菜单',
+                type: 1,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: true,
+                area: ["840px", "600px"],
+                content: content,
+                end: function () {
+                    //location.reload();
+                }
+            });
+        }
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: -1,
+            treeIdName: 'id',
+            treePidName: 'parentId',
+            elem: '#munu-table',
+            url: baseApi + 'GetAllList',
+            page: false,
+            cols: [[
+                { type: 'numbers' },
+                { field: 'name', minWidth: 200, title: '栏目' },
+                { field: 'speak', title: '层级', width: 380 },
+                { field: 'menuUrl', title: '菜单url' },
+                { field: 'code', title: '按钮编码' },
+                { field: 'id', width: 80, title: 'Id编号' },
+                { field: 'sort', width: 80, align: 'center', title: '排序号' },
+                { field: 'isShow', title: '状态', templet: '#switchTpl', unresize: true },
+                { type: "checkbox", width: 50 },
+                {
+                    field: 'isMenu', width: 80, align: 'center', templet: function (d) {
+                        if (d.IsMenu == 0) {
+                            return '<span class="layui-badge layui-btn-gray">按钮</span>';
+                        }
+                        if (d.ParentId == -1) {
+                            return '<span class="layui-badge layui-bg-blue">目录</span>';
+                        } else {
+                            return '<span class="layui-badge-rim">菜单</span>';
+                        }
+                    }, title: '类型'
+                },
+                { templet: '#auth-state', width: 120, align: 'center', title: '操作' }
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+
+        });
+        $('#btn-add').click(createFun);
+
+        $('#btn-del').click(function () {
+            var checkStatus = table.checkStatus('munu-table')
+                , data = checkStatus.data;
+            if (data != null && data.length > 0) {
+                var ids = "";
+                for (var i = 0; i < data.length; i++) {
+                    ids += data[i].id + ","
+                }
+                //deleteFun(ids);
+            }
+
+        });
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'del') {
+                deleteFun(data.id);
+            } else if (layEvent === 'edit') {
+                editFun(data.id);
+            }
+        });
+
+        //监听状态操作
+        form.on('switch(ShowDemo)', function (data) {
+            var swithcData = data;
+            var id = data.value;// 获取要修改的ID
+            var IsShow = this.checked ? '启用' : '停用';// 当前状态值
+            layer.msg(IsShow);
+            //$.ajax({
+            //    type: 'post',
+            //    url: '/',
+            //    data: {
+            //        "id": id,
+            //        "IsShow": IsShow
+            //    },
+            //    error: function (data) {
+            //        console.log(data);
+            //        layer.msg('数据异常，操作失败！');
+            //    },
+            //    // 修改失败，请填写对应的参数
+            //    success: function (data) {
+            //        layer.alert("操作成功", {
+            //            icon: 6
+            //        });
+            //        //window.location.reload();
+            //    }
+            //});
+        });
+    });
+</script>
